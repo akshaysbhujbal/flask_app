@@ -1,5 +1,17 @@
 from flask import Flask, request, render_template
 from datetime import datetime
+from dotenv import load_dotenv
+import os
+from pymongo import MongoClient
+load_dotenv()
+MONGO_URI=os.getenv("MONGO_URI")
+
+client=MongoClient(MONGO_URI)
+print("MONGO_URI:", MONGO_URI)
+db=client.test
+collection=db['users']
+
+#client=mongodb+srv://akshaysb:25980@asbcluster.g7sfjqn.mongodb.net/?appName=asbCluster
 
 app=Flask(__name__)
 @app.route('/')
@@ -7,10 +19,13 @@ def home():
     day_of_week=datetime.today().strftime('%A')
     current_time=datetime.now().strftime('%H:%M:%S')
     return render_template('index.html',day_of_week=day_of_week,current_time=current_time)
-    
-    
     #return {'day':day_of_week, 'time':current_time}
     
+@app.route('/submit', methods=['POST'])    
+def submit():
+    form_data=dict(request.form)
+    collection.insert_one(form_data)
+    return 'Registered successfully!'
 #Value get from url 
 @app.route('/api/<name>') #User needs to send like '5000/name/Sam'
 def name(name):
