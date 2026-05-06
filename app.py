@@ -1,10 +1,12 @@
 from flask import Flask, request
+from datetime import datetime
 
 app=Flask(__name__)
 @app.route('/')
-
 def home():
-    return 'Welcome to the home page'
+    day_of_week=datetime.today().strftime('%A')
+    current_time=datetime.now().strftime('%H:%M:%S')
+    return {'day':day_of_week, 'time':current_time}
 
 #Value get from url 
 @app.route('/api/<name>') #User needs to send like '5000/name/Sam'
